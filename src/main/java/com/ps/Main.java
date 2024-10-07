@@ -1,10 +1,17 @@
+// This project is a simple library management system.
+// Users can check out and return books from a predefined collection.
+// Each book has a unique ID, ISBN, title, and availability status.
+// The system allows users to view available books, check out a book,
+// and return a checked-out book, providing a basic interface for library operations.
+
 package com.ps;
 import java.util.Scanner;
 
 public class Main {
-    static Scanner scnr = new Scanner(System.in);
+    static Scanner scnr = new Scanner(System.in); // Initialize a scanner for user input
     public static void main(String[] args) {
 
+        // Create an array of Book objects with a fixed size of 20
         Book[] library = new Book[20];
 
         library[0] = new Book(1, "978-0-06-112008-4", "To Kill a Mockingbird");
@@ -28,111 +35,136 @@ public class Main {
         library[18] = new Book(19, "978-0-06-052848-3", "The Perks of Being a Wallflower");
         library[19] = new Book(20, "978-0-451-53036-5", "The Book Thief");
 
+        // Welcome message for the user
         System.out.println("Welcome to our library! Please select one of the options below -");
 
+        // Main loop for menu navigation
         do {
+            // Display menu options
             System.out.println("\n 1) Show available books and check out a book");
             System.out.println(" 2) Show checked out books or return a book");
             System.out.println(" 3) Exit the library");
             System.out.print("\nPlease enter the corresponding number to the option you want to choose: ");
+            // Read user choice
             int choice = scnr.nextInt();
             scnr.nextLine();
+            // Handle user's choice
             if (choice == 1) {
-                displayAvailable (library);
+                displayAvailable (library); // Show available books
             } else if (choice == 2) {
-                displayCheckedOut (library);
+                displayCheckedOut (library); // Show checked-out books
             } else if (choice == 3) {
+                // Exit message and break the loop
                 System.out.println("\nThank you for visiting the library. Goodbye!");
                 break;
             } else {
+                // Inform the user of an invalid option
                 System.out.println("\nInvalid option. Please try again.");
             }
-        } while (true);
+        } while (true); // Continue until the user chooses to exit
     }
 
+    // Method to display available books and allow checking out a book
     public static void displayAvailable (Book[] library) {
         System.out.println("\nHere is a list of all of our available books: ");
 
+        // Loop through the library array and print available books
         for (int i = 0; i < library.length; i++) {
             if (!library[i].isCheckedOut()) {
-                System.out.println(library[i]);
+                System.out.println(library[i]); // Print book information using toString()
             }
         }
         String selection;
 
+        // Loop to handle user's choice to check out a book or return to main menu
         do {
             System.out.println("\nIf you would like to check out a book, please enter \"yes\".");
             System.out.println("If you would like to return to the home screen, please enter \"no\".");
             System.out.print("\nPlease make your selection: ");
             selection = scnr.nextLine().trim();
 
+            // Check if user wants to check out a book
             if (selection.equalsIgnoreCase("yes")) {
                 System.out.print("\nPlease enter the ID of the book you would like to check out: ");
+                // Validate if the next input is an integer
                 if (scnr.hasNextInt()) {
-                    int id = scnr.nextInt();
+                    int id = scnr.nextInt(); // Read the book ID
                     scnr.nextLine();
+                    // Check if the book ID is valid and if the book is available
                     if (id == library[id - 1].getId() && !library[id - 1].isCheckedOut()) {
                         System.out.print("\nPlease enter your first and last name: ");
-                        String name = scnr.nextLine();
-                        library[id - 1].checkOut(name);
+                        String name = scnr.nextLine(); // Read user's name
+                        library[id - 1].checkOut(name); // Check out the book
                         System.out.println("\nYou have checked out \"" + library[id - 1].getTitle() + "\".");
                         System.out.println("\nReturning to the main menu...");
-                        break;
+                        break; // Exit the loop after successful check out
                     } else {
+                        // Inform the user of an invalid book ID
                         System.out.println("\nInvalid book ID. Please try again.");
                     }
                 } else {
+                    // Handle invalid input for book ID
                     System.out.println("\nInvalid input. Please enter a number.");
                     scnr.nextLine();
                 }
             } else if (selection.equalsIgnoreCase("no")) {
                 System.out.println("\nReturning to the main menu...");
-                return;
+                return; // Return to main menu without further action
             } else {
+                // Inform the user of an invalid option
                 System.out.println("\nInvalid option. Please try again.");
             }
-        } while (true);
+        } while (true); // Continue until a valid option is selected
     }
 
+    // Method to display checked-out books and allow returning a book
     public static void displayCheckedOut (Book[] library) {
         System.out.println("\nHere is a list of all of our checked out books: ");
 
+        // Loop through the library array and print checked-out books
         for (int i = 0; i < library.length; i++) {
             if (library[i].isCheckedOut()) {
-                System.out.println(library[i]);
+                System.out.println(library[i] + ", Checked out to: " + library[i].getCheckedOutTo()); // Print book information using toString()
             }
         }
         String selection;
 
+        // Loop to handle user's choice to return a book or go back to the main menu
         do {
             System.out.println("\nIf you would like to return a book, please enter \"yes\".");
             System.out.println("If you would like to return to the home screen, please enter \"no\".");
             System.out.print("\nPlease make your selection: ");
-            selection = scnr.nextLine().trim();
+            selection = scnr.nextLine().trim(); // Read and trim user input
 
+            // Check if user wants to return a book
             if (selection.equalsIgnoreCase("yes")) {
                 System.out.print("\nPlease enter the ID of the book you are checking in: ");
+                // Validate if the next input is an integer
                 if (scnr.hasNextInt()) {
-                    int id = scnr.nextInt();
-                    scnr.nextLine();
+                    int id = scnr.nextInt(); // Read the book ID
+                    scnr.nextLine();// Consume the newline character
+                    // Check if the book ID is valid and if the book is checked out
                     if (id == library[id - 1].getId() && library[id - 1].isCheckedOut()) {
-                        library[id - 1].checkIn();
+                        library[id - 1].checkIn(); // Check in the book
                         System.out.println("\nYou have checked in \"" + library[id - 1].getTitle() + "\"");
                         System.out.println("\nReturning to the main menu...");
-                        break;
+                        break; // Exit the loop after successful check in
                     } else {
+                        // Inform the user of an invalid book ID
                         System.out.println("\nInvalid book ID. Please try again.");
                     }
                 } else {
+                    // Handle invalid input for book ID
                     System.out.println("\nInvalid input. Please enter a number.");
                     scnr.nextLine();
                 }
             } else if (selection.equalsIgnoreCase("no")) {
                 System.out.println("\nReturning to the main menu...");
-                return;
+                return; // Return to main menu without further action
             } else {
+                // Inform the user of an invalid option
                 System.out.println("\nInvalid option. Please try again.");
             }
-        } while (true);
+        } while (true); // Continue until a valid option is selected
     }
 }
